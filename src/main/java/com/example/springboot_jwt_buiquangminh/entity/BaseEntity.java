@@ -32,4 +32,5 @@ public abstract class BaseEntity implements Serializable {
 
     private  Long updateBy;
 
+    public abstract void setCreatedBy(Long userId);
 }

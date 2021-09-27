@@ -9,22 +9,23 @@ import com.example.springboot_jwt_buiquangminh.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
 public class AuthController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private TokenService tokenService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
@@ -54,5 +55,16 @@ public class AuthController {
         tokenService.createToken(token);
 
         return ResponseEntity.ok(token.getToken());
+    }
+    @GetMapping("/hello")
+    @PreAuthorize("hasAnyAuthority('USER_READ')")
+    public ResponseEntity hello(){
+        return ResponseEntity.ok("hello");
+    }
+
+    @PutMapping("/user")
+    @PreAuthorize("hasAnyAuthority('USER_UPDATE')")
+    public ResponseEntity update(){
+        return ResponseEntity.ok("This is update");
     }
 }
